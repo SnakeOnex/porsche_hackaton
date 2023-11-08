@@ -5,6 +5,7 @@ Collect a dataset of (image, steering_angle) pairs and train a conv-net to predi
 
 ### Data format
 - data/ folder, with <name>.jpg as the image and <name>.txt for the steering angle.
+- [Sample dataset](https://www.kaggle.com/datasets/zahidbooni/alltownswithweather/)
 
 ## TODO
 - [ ] dataset class
