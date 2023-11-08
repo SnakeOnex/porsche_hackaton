@@ -10,13 +10,10 @@ from torch.utils.data import Dataset, DataLoader, Subset
 from torchvision import transforms
 from torch.utils.data import random_split
 
+from utils import plot_sample
+
 class SteeringAngleDataset(Dataset):
     def __init__(self, transform=None):
-        """
-        Args:
-            data_dir (string): Directory with all the images and steering angles.
-            transform (callable, optional): Optional transform to be applied on a sample.
-        """
         self.transform = transform
 
     def __len__(self):
@@ -51,6 +48,10 @@ class SteeringAngleDataset(Dataset):
 
         assert len(self.image_paths) == len(self.steering_angles)
         print(f'Loaded Kaggle dataset: {len(self.image_paths)} images with {len(self.steering_angles)} steering angles')
+
+    def print_stats(self):
+        steering_angles = np.array(self.steering_angles)
+        print(f'Steering angle stats: mean={np.rad2deg(steering_angles.mean()):.4f}, std={np.rad2deg(steering_angles.std()):.4f}, min={np.rad2deg(steering_angles.min()):.4f}, max={np.rad2deg(steering_angles.max()):.4f}')
 
 class ConvBlock(torch.nn.Module):
     def __init__(self, in_channels, out_channels, kernel_size, stride, padding):
@@ -134,15 +135,18 @@ def train(model, train_dataloader, valid_dataloader, criterion, optimizer, num_e
             best_loss = val_loss
             best_model = model
 
+            # save model
+            torch.save(best_model.state_dict(), f'best_model.pth')
+
         print(f'Epoch {epoch+1}/{num_epochs}, Train: {train_loss:.4f}, Valid: {val_loss:.4f}, Deg: {np.rad2deg(np.sqrt(val_loss)):.1f}')
 
 
 if __name__ == "__main__":
     # 0. set seed & parameters
     torch.manual_seed(0)
-    max_dataset_size = 100
-    num_epochs = 10
-    batch_size = 32
+    max_dataset_size = 10000
+    num_epochs = 3
+    batch_size = 16
     learning_rate = 0.001
 
     # 1. setting up dataset and dataloaders
@@ -153,6 +157,7 @@ if __name__ == "__main__":
     ])
     dataset = SteeringAngleDataset(transform=transform)
     dataset.load_kaggle_dataset('Data/')
+    dataset.print_stats()
     dataset = Subset(dataset, range(max_dataset_size))
 
     ## Define the proportions or absolute numbers for train and validation sets.
@@ -171,5 +176,16 @@ if __name__ == "__main__":
     criterion = torch.nn.MSELoss()
     optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate)
 
+    # 3. training
     train(model, train_dataloader, valid_dataloader, criterion, optimizer, num_epochs)
 
+    # load the best model
+    state_dict = torch.load('best_model.pth')
+    model.load_state_dict(state_dict)
+
+    val_idx = 285
+    real_idx = train_size + val_idx
+    image = dataset[real_idx]['image']
+    pred = model(image.unsqueeze(0)).item()
+    steering_angle = dataset[real_idx]['steering_angle']
+    plot_sample(image, steering_angle, pred)
