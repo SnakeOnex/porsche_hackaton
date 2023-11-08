@@ -1,4 +1,5 @@
 import torch
+import numpy as np
 import os
 from pathlib import Path
 from tqdm import tqdm
@@ -133,7 +134,7 @@ def train(model, train_dataloader, valid_dataloader, criterion, optimizer, num_e
             best_loss = val_loss
             best_model = model
 
-        print(f'Epoch {epoch+1}/{num_epochs}, Train Loss: {train_loss:.4f}, Validation Loss: {val_loss:.4f}')
+        print(f'Epoch {epoch+1}/{num_epochs}, Train: {train_loss:.4f}, Valid: {val_loss:.4f}, Deg: {np.rad2deg(np.sqrt(val_loss)):.1f}')
 
 
 if __name__ == "__main__":
@@ -141,7 +142,7 @@ if __name__ == "__main__":
     torch.manual_seed(0)
     max_dataset_size = 100
     num_epochs = 10
-    batch_size = 8
+    batch_size = 32
     learning_rate = 0.001
 
     # 1. setting up dataset and dataloaders
