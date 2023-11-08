@@ -145,7 +145,7 @@ if __name__ == "__main__":
     # 0. set seed & parameters
     torch.manual_seed(0)
     max_dataset_size = 10000
-    num_epochs = 3
+    num_epochs = 5
     batch_size = 16
     learning_rate = 0.001
 
@@ -165,7 +165,9 @@ if __name__ == "__main__":
     validation_size = len(dataset) - train_size
 
     ## Randomly split the dataset into training and validation datasets.
-    train_dataset, validation_dataset = random_split(dataset, [train_size, validation_size])
+    # train_dataset, validation_dataset = random_split(dataset, [train_size, validation_size])
+    train_dataset = Subset(dataset, range(train_size))
+    validation_dataset = Subset(dataset, range(train_size, len(dataset)))
 
     ## setting up dataloader
     train_dataloader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)

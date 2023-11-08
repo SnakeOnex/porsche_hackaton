@@ -13,5 +13,9 @@ Collect a dataset of (image, steering_angle) pairs and train a conv-net to predi
 - [X] dataset class
 - [X] inference code
 - [X] training loop
-- [ ] data augmentation to insentivise recovery behavior
-
+- [o] visualization:
+    - [X] plot_sample function
+    - [ ] plotting based on error
+- [ ] data augmentation to incentivize recovery behavior
+- [ ] dataset resampling to under-sample straights / over-sample turns
+- [ ] multi-image input to learn temporal context
