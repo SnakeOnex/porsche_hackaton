@@ -147,7 +147,7 @@ class CenterLinePredictor:
         x_center_points = self.find_center_line_points(
             left_pts, right_pts, n_points=n_points)
         poly_pred_center = np.polyval(poly, x_center_points)
-        return poly_pred_center, x_center_points
+        return (poly_pred_center, x_center_points), poly
 
     def predict_to_image(self, image, visualize=False, invert_roi=True):
         """Return the Y predictions of polynomial fitted to the center line and the valid X points"""

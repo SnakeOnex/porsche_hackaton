@@ -60,9 +60,10 @@ class Navigator(object):
         #print(f"throttle={throttle}, steer={steer}, brake={brake}")
         #cv2.imshow("OpenCV camera view", self.camera_rgb.image)
         points = None
+        poly = None
         try:
             im = self.detector.predict_to_image(self.camera_rgb.image)
-            points = self.detector.predict_to_points(self.camera_rgb.image)
+            points, poly = self.detector.predict_to_points(self.camera_rgb.image)
             
             cv2.imshow("OpenCV camera view", im)
         except:
@@ -83,6 +84,7 @@ class Navigator(object):
         control_data["target_speed"] = random.randint(0, 50)
         control_data["curve"] = random.randint(-90, 90)
         control_data["p"] = points
+        control_data["poly"] = poly
 
         self.frame_count += 1
         return control_data
