@@ -11,7 +11,7 @@ def rotate_image(image, angle):
   result = cv2.warpAffine(image, rot_mat, image.shape[1::-1], flags=cv2.INTER_LINEAR)
   return result, rot_mat
 
-def detect_aruco(frame):
+def detect_angle(frame):
     hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
     #cv2.imshow("reee", hsv)
     lower_blue = np.array([140, 30, 200])
