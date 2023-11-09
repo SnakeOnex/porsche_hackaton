@@ -42,12 +42,17 @@ class Navigator(object):
             opencv
         - However the surface array has swapped axes, so it cannot be used directly in opencv
         """
-        print(self.frame_count)
+        #print(self.frame_count)
+        controls = self.world.player.get_control()
+        throttle = controls.throttle
+        steer = controls.steer
+        brake = controls.brake
+        print(f"throttle={throttle}, steer={steer}, brake={brake}")
         cv2.imshow("OpenCV camera view", self.camera_rgb.image)
-        lane_detection.detect_edges(self.camera_rgb.image)
-        cv2.imshow("lidar", self.lidar.image)
+       #lane_detection.detect_edges(self.camera_rgb.image)
+       # cv2.imshow("lidar", self.lidar.image)
         # cv2.imshow("lidar", self.lidar.image)
-        if self.frame_count % 5 == 0:
+        if self.frame_count % 5 == 0 and False:
             image_path = self.image_folder / f"camera{self.frame_count:08d}.png"
             cv2.imwrite(str(image_path), self.camera_rgb.image)
 
