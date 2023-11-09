@@ -7,7 +7,8 @@ import pygame
 import random
 from pathlib import Path
 import lane_detection
-
+from center_line import CenterLinePredictor
+from steering_alg import control
 
 
 """
@@ -32,6 +33,7 @@ class Navigator(object):
         self.steering_vals_path = self.steer_folder / "steering_vals.txt"
         print("path: ", str(self.steering_vals_path))
         self.file = open(str(self.steering_vals_path), "w")
+        self.detector = CenterLinePredictor()
 
     def run_step(self):
         """
@@ -55,10 +57,19 @@ class Navigator(object):
         throttle = controls.throttle
         steer = controls.steer
         brake = controls.brake
-        print(f"throttle={throttle}, steer={steer}, brake={brake}")
-        cv2.imshow("OpenCV camera view", self.camera_rgb.image)
+        #print(f"throttle={throttle}, steer={steer}, brake={brake}")
+        #cv2.imshow("OpenCV camera view", self.camera_rgb.image)
+        points = None
+        try:
+            im = self.detector.predict_to_image(self.camera_rgb.image)
+            points = self.detector.predict_to_points(self.camera_rgb.image)
+            
+            cv2.imshow("OpenCV camera view", im)
+        except:
+            pass
         # lane_detection.detect_edges(self.camera_rgb.image)
-        if self.frame_count % 5 == 0:
+        if self.frame_count >= 50 and self.frame_count % 5 == 0:
+            print("recording")
             image_path = self.image_folder / f"camera{self.frame_count:08d}.png"
             cv2.imwrite(str(image_path), self.camera_rgb.image)
             self.file.write(f"{steer}\n")
@@ -71,6 +82,7 @@ class Navigator(object):
         """
         control_data["target_speed"] = random.randint(0, 50)
         control_data["curve"] = random.randint(-90, 90)
+        control_data["p"] = points
 
         self.frame_count += 1
         return control_data
