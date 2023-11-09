@@ -1,0 +1,27 @@
+{
+  "random_spawn": true,
+  "transform":
+  {
+    "location":
+    {
+      "x": -59,
+      "y": -106,
+      "z": 10
+    },
+    "rotation":
+    {
+      "pitch": 0.000000,
+      "yaw": 34,
+      "roll": 0.000000
+    }
+  },
+  "server_ip": "127.0.0.1",
+  "server_port": 2000,
+  "vehicle_name": "Carrera",
+  "camera_sensor":
+  {
+    "type": 0,
+    "location": 0
+  },
+  "cleanup": true
+}
