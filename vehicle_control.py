@@ -5,6 +5,8 @@ import numpy as np
 import carla
 from pid import PID
 import time
+from steering_alg import control as ctr
+
 """
 We expect from you to implement a run_step() function that will return vehicle control commands in form of 
 carla.VehicleControl class (https://carla.readthedocs.io/en/latest/python_api/#carlavehiclecontrol)
@@ -22,6 +24,7 @@ class Driver(object):
         self.speed = []
         self.bef = False
         self.last_time = time.perf_counter()
+        self.yawrb = 0.0
         self.pid = PID()
         pass
 
@@ -42,18 +45,20 @@ class Driver(object):
         if self.world.doors_are_open:
             tht = self.pid.step(20.0, speed[0], time.perf_counter() - self.last_time)
         else:
-            tht = self.pid.step(10.0, speed[0], time.perf_counter() - self.last_time)
-        print(tht)
+            tht = self.pid.step(12.0, speed[0], time.perf_counter() - self.last_time)
+        #print(tht)
         if tht > 0.0:
             control.throttle = tht
             control.brake = 0.0
         else:
             control.throttle = 0.0
             control.brake = -tht
-        
+       
         #control.throttle = tht# control_data["target_speed"] / 50  # Scalar value between [0.0,1.0]
-        control.steer = 0#control_data["curve"] / 90  # Scalar value between [-1.0, 1.0]; -1.0 max left, 1.0 max right
+        #control.steer = 0#control_data["curve"] / 90  # Scalar value between [-1.0, 1.0]; -1.0 max left, 1.0 max right
         #control.brake = 0.0  # Scalar value between [0.0,1.0]
+        #print(self.world.imu_sensor.gyroscope)
+        control.steer = ctr(control_data["p"],0,20,self.world.imu_sensor.gyroscope[2],self.yawrb,time.perf_counter() - self.last_time)
         control.hand_brake = False  # bool
         control.reverse = False  # bool
         control.manual_gear_shift = False  # bool - should be set to false
@@ -67,6 +72,7 @@ class Driver(object):
             np.save("speed.npy",np.array(self.speed))
         #print(self.world.player.get_velocity())
         self.bef = self.world.doors_are_open
+        self.yawrb = self.world.imu_sensor.gyroscope[2]
         self.last_time = time.perf_counter()
         return control
 

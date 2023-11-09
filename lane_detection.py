@@ -1,13 +1,45 @@
 import cv2
 import numpy as np
 import math
+from scipy import ndimage
 
+
+
+def rotate_image(image, angle):
+  image_center = tuple(np.array(image.shape[1::-1]) / 2)
+  rot_mat = cv2.getRotationMatrix2D(image_center, angle, 1.0)
+  result = cv2.warpAffine(image, rot_mat, image.shape[1::-1], flags=cv2.INTER_LINEAR)
+  return result, rot_mat
+
+def detect_angle(frame):
+    hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
+    #cv2.imshow("reee", hsv)
+    lower_blue = np.array([140, 30, 200])
+    upper_blue = np.array([160, 170, 255])
+    mask = cv2.inRange(hsv, lower_blue, upper_blue)
+    #cv2.imshow("aaamask", mask)
+    cntr, hir = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
+
+    cv2.drawContours(frame, cntr, -1, (0, 255, 0), 3)
+    ps = []
+    a = True
+    for i in cntr:
+        M = cv2.moments(i)
+        if M['m00'] != 0:
+            cx = int(M['m10'] / M['m00'])
+            cy = int(M['m01'] / M['m00'])
+            ps.append((cx, cy))
+
+
+    print(np.rad2deg(np.arctan2(ps[1][1]-ps[0][1], ps[1][0]-ps[0][0])))
+    return np.rad2deg(np.arctan2(ps[1][1]-ps[0][1], ps[1][0]-ps[0][0])) + 90
+    #cv2.imshow("aaaaa", frame)
 
 def detect_lane(frame):
-
+    detect_aruco(frame)
     edges = detect_edges(frame)
-    cropped_edges = region_of_interest(edges)
-    line_segments = detect_line_segments(cropped_edges)
+    # cropped_edges = region_of_interest(edges)
+    line_segments = detect_line_segments(edges)
     lane_lines, _, _ = average_slope_intercept(frame, line_segments)
 
     return lane_lines
@@ -20,8 +52,8 @@ def detect_edges(frame, return_mask=False, show_image=False, lower_thresh=[0, 0,
     lower_blue = np.array(lower_thresh)
     upper_blue = np.array(upper_thresh)
     mask = cv2.inRange(hsv, lower_blue, upper_blue)
-    if show_image:
-        cv2.imshow("mask", mask)
+    #cv2.imshow("mask", mask)
+
     # detect edges
     edges = cv2.Canny(mask, 200, 400)
     if not return_mask:
@@ -43,6 +75,7 @@ def region_of_interest(edges):
     ]], np.int32)
 
     cv2.fillPoly(mask, polygon, 255)
+    # cv2.imshow("ROI", mask)
     cropped_edges = cv2.bitwise_and(edges, mask)
 
     return cropped_edges

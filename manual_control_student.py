@@ -647,6 +647,7 @@ class KeyboardControl(object):
                         #self._control = self.pes_control
                         self._control.throttle = self.pes_control.throttle
                         self._control.brake = self.pes_control.brake
+                        self._control.steer = self.pes_control.steer
                     world.player.apply_control(self._control)
                 else:
                     world.player.apply_ackermann_control(self._ackermann_control)
