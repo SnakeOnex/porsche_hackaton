@@ -155,7 +155,7 @@ def main(args):
     max_dataset_size = args.max_dataset_size
     num_epochs = args.num_epochs
     batch_size = args.batch_size
-    train_fraction = args.train_size / max_dataset_size
+    train_fraction = args.train_frac
     learning_rate = args.lr
 
     # 1. setting up dataset and dataloaders
@@ -213,7 +213,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument('--max_dataset_size', type=int, default=10000)
     parser.add_argument('--batch_size', type=int, default=64)
-    parser.add_argument('--train_size', type=int, default=8000)
+    parser.add_argument('--train_frac', type=float, default=0.8)
     parser.add_argument('--num_epochs', type=int, default=5)
     parser.add_argument('--lr', type=float, default=0.001)
     parser.add_argument('--force_retrain', action='store_true', default=False)
