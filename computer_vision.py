@@ -43,7 +43,8 @@ class Navigator(object):
         cv2.imshow("OpenCV camera view", self.camera_rgb.image)
         # cv2.imshow("lidar", self.lidar.image)
         if self.frame_count % 5 == 0:
-            cv2.imwrite(f"camera{self.frame_count:08d}.png", self.camera_rgb.image)
+            image_path = self.image_folder / f"camera{self.frame_count:08d}.png"
+            cv2.imwrite(str(image_path), self.camera_rgb.image)
 
         cv2.waitKey(1)
         
