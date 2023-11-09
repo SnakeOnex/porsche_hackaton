@@ -48,7 +48,7 @@ def display_heading_line(frame, steering_angle, line_color=(0, 0, 255), line_wid
 
 
 # cv2.destroyAllWindows()
-frame = cv2.imread('IMG_1051.png')
+frame = cv2.imread('CarlaData/images/06.png')
 frame = cv2.resize(frame, (640, 480), interpolation = cv2.INTER_AREA)
 """
 edges = detect_edges(frame)
