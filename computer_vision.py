@@ -1,6 +1,7 @@
 
 # add your global imports here
 import cv2
+import time
 import numpy as np
 import pygame
 import random
@@ -23,7 +24,11 @@ class Navigator(object):
         self.camera_rgb = world.camera_manager
 
         self.frame_count = 0
-        self.image_folder = Path("data/")
+        self.episode_folder = Path("data/") / f"episode_{time.time():.0f}"
+        self.image_folder = self.episode_folder / "images"
+        self.steer_folder = self.episode_folder / "steer"
+        self.steering_vals_path = self.steer_folder / "steering_vals.txt"
+        self.file = open(self.steering_vals_path, "w")
 
     def run_step(self):
         """
@@ -49,13 +54,11 @@ class Navigator(object):
         brake = controls.brake
         print(f"throttle={throttle}, steer={steer}, brake={brake}")
         cv2.imshow("OpenCV camera view", self.camera_rgb.image)
-       #lane_detection.detect_edges(self.camera_rgb.image)
-       # cv2.imshow("lidar", self.lidar.image)
-        # cv2.imshow("lidar", self.lidar.image)
-        if self.frame_count % 5 == 0 and False:
+        # lane_detection.detect_edges(self.camera_rgb.image)
+        if self.frame_count % 5 == 0:
             image_path = self.image_folder / f"camera{self.frame_count:08d}.png"
             cv2.imwrite(str(image_path), self.camera_rgb.image)
-
+            self.file.write(f"{steer}\n")
         cv2.waitKey(1)
         
         
