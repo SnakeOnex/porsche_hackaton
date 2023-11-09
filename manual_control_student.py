@@ -498,6 +498,7 @@ class KeyboardControl(object):
                 elif event.key == K_F1:
                     world.hud.toggle_info()
                 elif event.key == K_F2 or event.key == K_p:
+                    print("vopice")
                     if self._world.pes_mode_on:
                         self._world.pes_mode_on = False
                     else:
@@ -643,7 +644,7 @@ class KeyboardControl(object):
                 if not self._ackermann_enabled:
                     if self._world.pes_mode_on:
                         world.hud.notification("Automatic control mode on")
-                        self._control = self.pes_control
+                        #self._control = self.pes_control
                     world.player.apply_control(self._control)
                 else:
                     world.player.apply_ackermann_control(self._ackermann_control)

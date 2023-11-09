@@ -21,7 +21,7 @@ class Navigator(object):
         self.camera_rgb = world.camera_manager
 
         self.frame_count = 0
-        self.image_folder = Path("images/")
+        self.image_folder = Path("data/")
 
     def run_step(self):
         """
@@ -40,6 +40,7 @@ class Navigator(object):
             opencv
         - However the surface array has swapped axes, so it cannot be used directly in opencv
         """
+        print(self.frame_count)
         cv2.imshow("OpenCV camera view", self.camera_rgb.image)
         # cv2.imshow("lidar", self.lidar.image)
         if self.frame_count % 5 == 0:

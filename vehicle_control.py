@@ -30,8 +30,8 @@ class Driver(object):
         """
 
         control = carla.VehicleControl()
-        control.throttle = control_data["target_speed"] / 50  # Scalar value between [0.0,1.0]
-        control.steer = control_data["curve"] / 90  # Scalar value between [-1.0, 1.0]; -1.0 max left, 1.0 max right
+        control.throttle = 0.1# control_data["target_speed"] / 50  # Scalar value between [0.0,1.0]
+        control.steer = -1.0#control_data["curve"] / 90  # Scalar value between [-1.0, 1.0]; -1.0 max left, 1.0 max right
         control.brake = 0.0  # Scalar value between [0.0,1.0]
         control.hand_brake = False  # bool
         control.reverse = False  # bool
