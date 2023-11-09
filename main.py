@@ -4,12 +4,14 @@ from lane_detection import detect_lane, detect_edges, region_of_interest, detect
 from heading import *
 import math
 
+
 def display_lines(frame, lines, line_color=(0, 255, 0), line_width=2):
     line_image = np.zeros_like(frame)
     if lines is not None:
         for line in lines:
             for x1, y1, x2, y2 in line:
-                cv2.line(line_image, (x1, y1), (x2, y2), line_color, line_width)
+                cv2.line(line_image, (x1, y1), (x2, y2),
+                         line_color, line_width)
     line_image = cv2.addWeighted(frame, 0.8, line_image, 1, 1)
     return line_image
 
@@ -37,6 +39,7 @@ def display_heading_line(frame, steering_angle, line_color=(0, 0, 255), line_wid
 
     return heading_image
 
+
 # edges = detect_edges(frame)
 # cv2.imshow("edges", edges)
 # cv2.waitKey(0)
@@ -49,8 +52,8 @@ def display_heading_line(frame, steering_angle, line_color=(0, 0, 255), line_wid
 
 # cv2.destroyAllWindows()
 frame = cv2.imread('CarlaData/images/06.png')
-frame = cv2.resize(frame, (640, 480), interpolation = cv2.INTER_AREA)
-"""
+frame = cv2.resize(frame, (640, 480), interpolation=cv2.INTER_AREA)
+
 edges = detect_edges(frame)
 cropped_edges = region_of_interest(edges)
 line_segments = detect_line_segments(cropped_edges)
@@ -61,13 +64,12 @@ print(lane_lines)
 
 cv2.imshow("heading", cropped_edges)
 cv2.waitKey(0)
-"""
-
 
 lane_lines = detect_lane(frame)
 print(len(lane_lines))
 lane_lines_image = display_lines(frame, lane_lines)
-heading_image = display_heading_line(frame, compute_steering_angle(frame, lane_lines))
+heading_image = display_heading_line(
+    frame, compute_steering_angle(frame, lane_lines))
 cv2.imshow("lane lines", lane_lines_image)
 cv2.imshow("heading", heading_image)
 cv2.waitKey(0)
