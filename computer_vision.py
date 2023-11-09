@@ -4,7 +4,7 @@ import cv2
 import numpy as np
 import pygame
 import random
-
+from pathlib import Path
 
 
 """
@@ -19,9 +19,9 @@ class Navigator(object):
         self.world = world
         self.lidar = world.lidar_manager
         self.camera_rgb = world.camera_manager
-        pass
 
         self.frame_count = 0
+        self.image_folder = Path("images/")
 
     def run_step(self):
         """
