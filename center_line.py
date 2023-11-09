@@ -217,48 +217,48 @@ class CenterLinePredictor:
         plt.show()
 
 
-def predict_to_poly(self, image, visualize=False, invert_roi=False, return_points=False):
-    resized_image = cv2.resize(
-        image, self.imsize, interpolation=cv2.INTER_AREA)
-    edges, mask = self.detect_edges(resized_image, return_mask=True)
-    roi_mask = self.crop_to_roi(mask, invert=invert_roi)
-    points = np.argwhere(roi_mask > 0)
-    points_left = points[points[:, 1] < roi_mask.shape[1]//2]
-    points_right = points[points[:, 1] > roi_mask.shape[1]//2]
-    points_left_for_poly = average_y_for_unique_x(points_left)
-    points_right_for_poly = average_y_for_unique_x(points_right)
-    left_poly = np.polyfit(
-        points_left_for_poly[:, 0], points_left_for_poly[:, 1], self.polydeg)
-    right_poly = np.polyfit(
-        points_right_for_poly[:, 0], points_right_for_poly[:, 1], self.polydeg)
-    center_poly = (left_poly + right_poly) / 2
-    if visualize:
-        self.visualize(resized_image, edges, mask, roi_mask, points_left_for_poly, points_right_for_poly,
-                       left_poly, right_poly, center_poly)
-    if return_points:
-        return center_poly, points_left_for_poly, points_right_for_poly
-    else:
-        return center_poly
+# def predict_to_poly(self, image, visualize=False, invert_roi=False, return_points=False):
+#     resized_image = cv2.resize(
+#         image, self.imsize, interpolation=cv2.INTER_AREA)
+#     edges, mask = self.detect_edges(resized_image, return_mask=True)
+#     roi_mask = self.crop_to_roi(mask, invert=invert_roi)
+#     points = np.argwhere(roi_mask > 0)
+#     points_left = points[points[:, 1] < roi_mask.shape[1]//2]
+#     points_right = points[points[:, 1] > roi_mask.shape[1]//2]
+#     points_left_for_poly = average_y_for_unique_x(points_left)
+#     points_right_for_poly = average_y_for_unique_x(points_right)
+#     left_poly = np.polyfit(
+#         points_left_for_poly[:, 0], points_left_for_poly[:, 1], self.polydeg)
+#     right_poly = np.polyfit(
+#         points_right_for_poly[:, 0], points_right_for_poly[:, 1], self.polydeg)
+#     center_poly = (left_poly + right_poly) / 2
+#     if visualize:
+#         self.visualize(resized_image, edges, mask, roi_mask, points_left_for_poly, points_right_for_poly,
+#                        left_poly, right_poly, center_poly)
+#     if return_points:
+#         return center_poly, points_left_for_poly, points_right_for_poly
+#     else:
+#         return center_poly
 
 
-def predict_to_points(self, image, visualize=False, invert_roi=True, n_points=50):
-    """Return the Y predictions of polynomial fitted to the center line and the valid X points"""
-    poly, left_pts, right_pts = self.predict_to_poly(
-        image, return_points=True, visualize=visualize, invert_roi=invert_roi)
-    x_center_points = self.find_center_line_points(
-        left_pts, right_pts, n_points=n_points)
-    poly_pred_center = np.polyval(poly, x_center_points)
-    return (poly_pred_center, x_center_points), poly
+# def predict_to_points(self, image, visualize=False, invert_roi=True, n_points=50):
+#     """Return the Y predictions of polynomial fitted to the center line and the valid X points"""
+#     poly, left_pts, right_pts = self.predict_to_poly(
+#         image, return_points=True, visualize=visualize, invert_roi=invert_roi)
+#     x_center_points = self.find_center_line_points(
+#         left_pts, right_pts, n_points=n_points)
+#     poly_pred_center = np.polyval(poly, x_center_points)
+#     return (poly_pred_center, x_center_points), poly
 
 
-def predict_to_image(self, image, visualize=False, invert_roi=True):
-    """Return the Y predictions of polynomial fitted to the center line and the valid X points"""
-    poly, left_pts, right_pts = self.predict_to_poly(
-        image, return_points=True, visualize=visualize, invert_roi=invert_roi)
-    x_center_points = self.find_center_line_points(
-        left_pts, right_pts, n_points=self.height).astype(np.int32)
-    poly_pred_center = np.polyval(poly, x_center_points).astype(np.int32)
-    mask = np.zeros(shape=self.imsize[::-1])
-    for x, y in zip(x_center_points, poly_pred_center):
-        cv2.circle(mask, (y, x), 2, (255, 255, 255), 5)
-    return mask
+# def predict_to_image(self, image, visualize=False, invert_roi=True):
+#     """Return the Y predictions of polynomial fitted to the center line and the valid X points"""
+#     poly, left_pts, right_pts = self.predict_to_poly(
+#         image, return_points=True, visualize=visualize, invert_roi=invert_roi)
+#     x_center_points = self.find_center_line_points(
+#         left_pts, right_pts, n_points=self.height).astype(np.int32)
+#     poly_pred_center = np.polyval(poly, x_center_points).astype(np.int32)
+#     mask = np.zeros(shape=self.imsize[::-1])
+#     for x, y in zip(x_center_points, poly_pred_center):
+#         cv2.circle(mask, (y, x), 2, (255, 255, 255), 5)
+#     return mask
