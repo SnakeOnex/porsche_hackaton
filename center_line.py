@@ -121,7 +121,7 @@ class CenterLinePredictor:
             right_cluster = first_cluster_points
         return left_cluster, right_cluster
 
-    def predict_to_poly(self, image, visualize=False, invert_roi=False, return_points=False):
+    def predict_to_poly(self, image, visualize=False, invert_roi=True, return_points=False):
         resized_image = cv2.resize(
             image, self.imsize, interpolation=cv2.INTER_AREA)
         edges, mask = self.detect_edges(resized_image, return_mask=True)
