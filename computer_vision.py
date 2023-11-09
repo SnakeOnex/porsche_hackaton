@@ -21,6 +21,8 @@ class Navigator(object):
         self.camera_rgb = world.camera_manager
         pass
 
+        self.frame_count = 0
+
     def run_step(self):
         """
         Method analyzing the sensors to obtain the data needed for car steering
@@ -39,7 +41,10 @@ class Navigator(object):
         - However the surface array has swapped axes, so it cannot be used directly in opencv
         """
         cv2.imshow("OpenCV camera view", self.camera_rgb.image)
-        cv2.imshow("lidar", self.lidar.image)
+        # cv2.imshow("lidar", self.lidar.image)
+        if self.frame_count % 5 == 0:
+            cv2.imwrite(f"camera{self.frame_count:08d}.png", self.camera_rgb.image)
+
         cv2.waitKey(1)
         
         
@@ -49,6 +54,7 @@ class Navigator(object):
         """
         control_data["target_speed"] = random.randint(0, 50)
         control_data["curve"] = random.randint(-90, 90)
-        
+
+        self.frame_count += 1
         return control_data
 
