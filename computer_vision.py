@@ -5,6 +5,8 @@ import numpy as np
 import pygame
 import random
 from pathlib import Path
+import lane_detection
+
 
 
 """
@@ -42,6 +44,8 @@ class Navigator(object):
         """
         print(self.frame_count)
         cv2.imshow("OpenCV camera view", self.camera_rgb.image)
+        lane_detection.detect_edges(self.camera_rgb.image)
+        cv2.imshow("lidar", self.lidar.image)
         # cv2.imshow("lidar", self.lidar.image)
         if self.frame_count % 5 == 0:
             image_path = self.image_folder / f"camera{self.frame_count:08d}.png"
