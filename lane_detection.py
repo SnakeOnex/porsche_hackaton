@@ -2,29 +2,32 @@ import cv2
 import numpy as np
 import math
 
+
 def detect_lane(frame):
-    
+
     edges = detect_edges(frame)
     cropped_edges = region_of_interest(edges)
     line_segments = detect_line_segments(cropped_edges)
     lane_lines, _, _ = average_slope_intercept(frame, line_segments)
-    
+
     return lane_lines
 
 
-def detect_edges(frame):
+def detect_edges(frame, return_mask=False, show_image=False, lower_thresh=[0, 0, 230], upper_thresh=[180, 255, 255]):
     # filter for blue lane lines
     hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
     # show_image("hsv", hsv)
-    lower_blue = np.array([0, 0, 230])
-    upper_blue = np.array([180, 255, 255])
+    lower_blue = np.array(lower_thresh)
+    upper_blue = np.array(upper_thresh)
     mask = cv2.inRange(hsv, lower_blue, upper_blue)
-    cv2.imshow("mask", mask)
-
+    if show_image:
+        cv2.imshow("mask", mask)
     # detect edges
     edges = cv2.Canny(mask, 200, 400)
-
-    return edges
+    if not return_mask:
+        return edges
+    else:
+        return edges, mask
 
 
 def region_of_interest(edges):
@@ -42,8 +45,6 @@ def region_of_interest(edges):
     cv2.fillPoly(mask, polygon, 255)
     cropped_edges = cv2.bitwise_and(edges, mask)
 
-
-
     return cropped_edges
 
 
@@ -52,7 +53,7 @@ def detect_line_segments(cropped_edges):
     rho = 1  # distance precision in pixel, i.e. 1 pixel
     angle = np.pi / 180  # angular precision in radian, i.e. 1 degree
     min_threshold = 10  # minimal of votes
-    line_segments = cv2.HoughLinesP(cropped_edges, rho, angle, min_threshold, 
+    line_segments = cv2.HoughLinesP(cropped_edges, rho, angle, min_threshold,
                                     np.array([]), minLineLength=8, maxLineGap=4)
 
     # print('line segments', line_segments)
@@ -76,8 +77,10 @@ def average_slope_intercept(frame, line_segments):
     right_fit = []
 
     boundary = 0.4
-    left_region_boundary = width * boundary  # left lane line segment should be on left 2/3 of the screen
-    right_region_boundary = width * (1 - boundary) # right lane line segment should be on left 2/3 of the screen
+    # left lane line segment should be on left 2/3 of the screen
+    left_region_boundary = width * boundary
+    # right lane line segment should be on left 2/3 of the screen
+    right_region_boundary = width * (1 - boundary)
 
     # print(left_region_boundary, right_region_boundary)
 
@@ -93,9 +96,9 @@ def average_slope_intercept(frame, line_segments):
             intercept = fit[1]
             # if slope < 0:
             if x1 < left_region_boundary and x2 < left_region_boundary:
-                    left_fit.append((slope, intercept))
+                left_fit.append((slope, intercept))
             elif x1 > right_region_boundary and x2 > right_region_boundary:
-                    right_fit.append((slope, intercept))
+                right_fit.append((slope, intercept))
 
     # print(left_fit)
     # print(right_fit)
@@ -193,6 +196,7 @@ def display_lines(frame, lines, line_color=(0, 255, 0), line_width=2):
     if lines is not None:
         for line in lines:
             for x1, y1, x2, y2 in line:
-                cv2.line(line_image, (x1, y1), (x2, y2), line_color, line_width)
+                cv2.line(line_image, (x1, y1), (x2, y2),
+                         line_color, line_width)
     line_image = cv2.addWeighted(frame, 0.8, line_image, 1, 1)
     return line_image
