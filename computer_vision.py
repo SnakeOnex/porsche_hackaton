@@ -24,13 +24,14 @@ class Navigator(object):
         self.camera_rgb = world.camera_manager
 
         self.frame_count = 0
-        self.episode_folder = Path("data/") / f"episode_{time.time():.0f}"
+        self.episode_folder = Path("data") / f"episode_{time.time():.0f}"
         self.image_folder = self.episode_folder / "images"
         self.steer_folder = self.episode_folder / "steer"
         self.image_folder.mkdir(parents=True)
         self.steer_folder.mkdir(parents=True)
         self.steering_vals_path = self.steer_folder / "steering_vals.txt"
-        self.file = open(self.steering_vals_path, "w")
+        print("path: ", str(self.steering_vals_path))
+        self.file = open(str(self.steering_vals_path), "w")
 
     def run_step(self):
         """

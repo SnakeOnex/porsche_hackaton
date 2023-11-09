@@ -645,6 +645,8 @@ class KeyboardControl(object):
                     if self._world.pes_mode_on:
                         world.hud.notification("Automatic control mode on")
                         #self._control = self.pes_control
+                        self._control.throttle = self.pes_control.throttle
+                        self._control.brake = self.pes_control.brake
                     world.player.apply_control(self._control)
                 else:
                     world.player.apply_ackermann_control(self._ackermann_control)
@@ -774,7 +776,7 @@ class HUD(object):
             '',
             'Vehicle: % 20s' % get_actor_display_name(world.player, truncate=20),
             'Map:     % 20s' % world.map.name.split('/')[-1],
-            'Simulation time: % 12s' % datetime.timedelta(seconds=int(self.simulation_time)),
+            'Simulation time: % 12s' % self.simulation_time,
             '',
             'Speed:   % 15.0f km/h' % (3.6 * math.sqrt(v.x**2 + v.y**2 + v.z**2)),
             u'Compass:% 17.0f\N{DEGREE SIGN} % 2s' % (compass, heading),
