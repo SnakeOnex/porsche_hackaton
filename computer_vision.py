@@ -4,6 +4,7 @@ import cv2
 import numpy as np
 import pygame
 import random
+import lane_detection
 
 
 
@@ -39,6 +40,7 @@ class Navigator(object):
         - However the surface array has swapped axes, so it cannot be used directly in opencv
         """
         cv2.imshow("OpenCV camera view", self.camera_rgb.image)
+        lane_detection.detect_edges(self.camera_rgb.image)
         cv2.imshow("lidar", self.lidar.image)
         cv2.waitKey(1)
         
