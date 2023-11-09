@@ -39,13 +39,17 @@ class Driver(object):
         control = carla.VehicleControl()
         vel = np.array([self.world.player.get_velocity().x,self.world.player.get_velocity().y])
         speed = self.global_to_local(vel, self.world.imu_sensor.compass)
-        tht = self.pid.step(10.0, speed[0], time.perf_counter() - self.last_time)
+        if self.world.doors_are_open:
+            tht = self.pid.step(20.0, speed[0], time.perf_counter() - self.last_time)
+        else:
+            tht = self.pid.step(10.0, speed[0], time.perf_counter() - self.last_time)
+        print(tht)
         if tht > 0.0:
             control.throttle = tht
             control.brake = 0.0
         else:
             control.throttle = 0.0
-            control.brake = tht
+            control.brake = -tht
         
         #control.throttle = tht# control_data["target_speed"] / 50  # Scalar value between [0.0,1.0]
         control.steer = 0#control_data["curve"] / 90  # Scalar value between [-1.0, 1.0]; -1.0 max left, 1.0 max right
@@ -67,7 +71,7 @@ class Driver(object):
         return control
 
 
-    def global_to_local(speed, ori) -> np.ndarray:
+    def global_to_local(self,speed, ori) -> np.ndarray:
         """Convert points from global to local coordinates
         From standard (x,y) to (x',y') where x' is forward and y' is left
 

@@ -1,7 +1,7 @@
 class PID:
     def __init__(self):
-        self.kp = 0.3
-        self.ki = 0.01
+        self.kp = 0.5
+        self.ki = 0.2
         self.kd = 0.0
         self.max = 1.0
         self.min = -1.0
